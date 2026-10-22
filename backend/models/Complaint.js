@@ -11,17 +11,22 @@ const complaintSchema = new mongoose.Schema(
 
         request: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "WasteRequest"
+            ref: "WasteRequest",
+            default: null
         },
 
         subject: {
             type: String,
-            required: true
+            required: [true, "Subject is required"],
+            trim: true,
+            minlength: [3, "Subject must be at least 3 characters"]
         },
 
         description: {
             type: String,
-            required: true
+            required: [true, "Description is required"],
+            trim: true,
+            minlength: [5, "Description must be at least 5 characters"]
         },
 
         priority: {
@@ -36,7 +41,11 @@ const complaintSchema = new mongoose.Schema(
             default: "Pending"
         },
 
-        resolution: String
+        resolution: {
+            type: String,
+            trim: true,
+            default: ""
+        }
     },
     {
         timestamps: true

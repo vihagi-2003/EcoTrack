@@ -1,13 +1,14 @@
 
-const r = require("express").Router();
-const c = require("../controllers/complaintController");
+const router = require("express").Router();
+
+const complaintController = require("../controllers/complaintController");
 const { protect } = require("../middleware/authMiddleware");
 
-r.use(protect);
+router.use(protect);
 
-r.get("/", c.list);
-r.post("/", c.create);
-r.put("/:id", c.update);
-r.delete("/:id", c.remove);
+router.get("/", complaintController.list);
+router.post("/", complaintController.create);
+router.put("/:id", complaintController.update);
+router.delete("/:id", complaintController.remove);
 
-module.exports = r;
+module.exports = router;
