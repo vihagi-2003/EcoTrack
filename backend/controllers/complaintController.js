@@ -1,71 +1,119 @@
 
-const M = require("../models/Complaint");
+const Complaint = require("../models/Complaint");
 
-exports.list = async (q, s) => {
+exports.list = async (req, res) => {
   try {
-    const complaints = await M.find(
-      q.user.role === "Resident"
-        ? { user: q.user._id }
-        : {}
-    )
+    const filter =
+      req.user.role === "Resident"
+        ? { user: req.user._id }
+        : {};
+
+    const complaints = await Complaint.find(filter)
       .populate("user", "name email")
+      .populate("request")
       .sort({ createdAt: -1 });
 
-    s.json(complaints);
-  } catch (e) {
-    s.status(500).json({ message: e.message });
+    res.status(200).json(complaints);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
 
-exports.create = async (q, s) => {
+exports.create = async (req, res) => {
   try {
-    const complaint = await M.create({
-      ...q.body,
-      user: q.user._id,
+    const { subject, description, priority, request } = req.body;
+
+    if (!subject || !description) {
+      return res.status(400).json({
+        message: "Subject and description are required",
+      });
+    }
+
+    const complaint = await Complaint.create({
+      user: req.user._id,
+      subject,
+      description,
+      priority: priority || "Medium",
+      ...(request ? { request } : {}),
     });
 
-    s.status(201).json(complaint);
-  } catch (e) {
-    s.status(400).json({ message: e.message });
+    res.status(201).json({
+      message: "Complaint created successfully",
+      complaint,
+    });
+  } catch (error) {
+    res.status(400).json({
+      message: error.message,
+    });
   }
 };
 
-exports.update = async (q, s) => {
+exports.update = async (req, res) => {
   try {
-    const complaint = await M.findByIdAndUpdate(
-      q.params.id,
-      q.body,
-      { new: true }
-    );
+    const allowedFields = [
+      "subject",
+      "description",
+      "priority",
+      "status",
+      "resolution",
+    ];
+
+    const updates = {};
+
+    for (const field of allowedFields) {
+      if (req.body[field] !== undefined) {
+        updates[field] = req.body[field];
+      }
+    }
+
+    const complaint = await Complaint.findByIdAndUpdate(
+      req.params.id,
+      updates,
+      {
+        new: true,
+        runValidators: true,
+      }
+    )
+      .populate("user", "name email")
+      .populate("request");
 
     if (!complaint) {
-      return s.status(404).json({
+      return res.status(404).json({
         message: "Complaint not found",
       });
     }
 
-    s.json(complaint);
-  } catch (e) {
-    s.status(500).json({ message: e.message });
+    res.status(200).json({
+      message: "Complaint updated successfully",
+      complaint,
+    });
+  } catch (error) {
+    res.status(400).json({
+      message: error.message,
+    });
   }
 };
 
-exports.remove = async (q, s) => {
+exports.remove = async (req, res) => {
   try {
-    const complaint = await M.findByIdAndDelete(
-      q.params.id
+    const complaint = await Complaint.findByIdAndDelete(
+      req.params.id
     );
 
     if (!complaint) {
-      return s.status(404).json({
+      return res.status(404).json({
         message: "Complaint not found",
       });
     }
 
-    s.json({
+    res.status(200).json({
       message: "Complaint deleted successfully",
     });
-  } catch (e) {
-    s.status(500).json({ message: e.message });
+  } catch (error) {
+    res.status(400).json({
+      message: error.message,
+    });
   }
 };
