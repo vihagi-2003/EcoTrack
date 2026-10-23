@@ -1,13 +1,12 @@
 
 const M = require("../models/WasteRequest");
 
-// Get all requests
+// Get all waste requests
 exports.list = async (q, s) => {
   try {
-    const filter =
-      q.user.role === "Resident"
-        ? { user: q.user._id }
-        : {};
+    const filter = q.user.role === "Resident"
+      ? { user: q.user._id }
+      : {};
 
     const requests = await M.find(filter)
       .populate("user", "name email")
@@ -16,13 +15,11 @@ exports.list = async (q, s) => {
 
     return s.status(200).json(requests);
   } catch (e) {
-    return s.status(500).json({
-      message: e.message
-    });
+    return s.status(500).json({ message: e.message });
   }
 };
 
-// Create a new request
+// Create request
 exports.create = async (q, s) => {
   try {
     const request = await M.create({
@@ -32,13 +29,11 @@ exports.create = async (q, s) => {
 
     return s.status(201).json(request);
   } catch (e) {
-    return s.status(400).json({
-      message: e.message
-    });
+    return s.status(400).json({ message: e.message });
   }
 };
 
-// Get a single request
+// Get request by ID
 exports.get = async (q, s) => {
   try {
     const request = await M.findById(q.params.id)
@@ -46,16 +41,12 @@ exports.get = async (q, s) => {
       .populate("collector", "name email");
 
     if (!request) {
-      return s.status(404).json({
-        message: "Request not found"
-      });
+      return s.status(404).json({ message: "Request not found" });
     }
 
-    // Residents can only view their own requests
     if (
       q.user.role === "Resident" &&
-      String(request.user?._id || request.user) !==
-        String(q.user._id)
+      String(request.user?._id || request.user) !== String(q.user._id)
     ) {
       return s.status(403).json({
         message: "You can only view your own requests"
@@ -64,13 +55,11 @@ exports.get = async (q, s) => {
 
     return s.status(200).json(request);
   } catch (e) {
-    return s.status(500).json({
-      message: e.message
-    });
+    return s.status(500).json({ message: e.message });
   }
 };
 
-// Update a request - Admin only
+// Update request
 exports.update = async (q, s) => {
   try {
     if (q.user.role !== "Admin") {
@@ -82,27 +71,20 @@ exports.update = async (q, s) => {
     const request = await M.findByIdAndUpdate(
       q.params.id,
       q.body,
-      {
-        new: true,
-        runValidators: true
-      }
+      { new: true, runValidators: true }
     );
 
     if (!request) {
-      return s.status(404).json({
-        message: "Request not found"
-      });
+      return s.status(404).json({ message: "Request not found" });
     }
 
     return s.status(200).json(request);
   } catch (e) {
-    return s.status(500).json({
-      message: e.message
-    });
+    return s.status(500).json({ message: e.message });
   }
 };
 
-// Delete a request - Admin only
+// Delete request
 exports.remove = async (q, s) => {
   try {
     if (q.user.role !== "Admin") {
@@ -114,9 +96,7 @@ exports.remove = async (q, s) => {
     const request = await M.findById(q.params.id);
 
     if (!request) {
-      return s.status(404).json({
-        message: "Request not found"
-      });
+      return s.status(404).json({ message: "Request not found" });
     }
 
     await M.findByIdAndDelete(q.params.id);
@@ -125,8 +105,6 @@ exports.remove = async (q, s) => {
       message: "Request deleted successfully"
     });
   } catch (e) {
-    return s.status(500).json({
-      message: e.message
-    });
+    return s.status(500).json({ message: e.message });
   }
 };
