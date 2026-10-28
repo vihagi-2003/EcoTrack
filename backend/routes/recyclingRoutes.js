@@ -1,13 +1,14 @@
-
-const r = require("express").Router();
-const c = require("../controllers/recyclingController");
+const router = require("express").Router();
+const recyclingController = require("../controllers/recyclingController");
 const { protect } = require("../middleware/authMiddleware");
 
-r.use(protect);
+// Protect all routes
+router.use(protect);
 
-r.get("/", c.list);
-r.post("/", c.create);
-r.put("/:id", c.update);
-r.delete("/:id", c.remove);
+// Recycling routes
+router.get("/", recyclingController.list);
+router.post("/", recyclingController.create);
+router.put("/:id", recyclingController.update);
+router.delete("/:id", recyclingController.remove);
 
-module.exports = r;
+module.exports = router;
