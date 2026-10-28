@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useState } from "react";
 import api from "../api";
 import { useAuth } from "../context/AuthContext";
@@ -82,6 +83,7 @@ export default function Recycling() {
       await api.post("/recycling", {
         category: form.category,
         quantity,
+        unit: "kg",
         partner: form.partner.trim(),
       });
 
@@ -111,6 +113,11 @@ export default function Recycling() {
     }
 
     const id = record._id || record.id;
+
+    if (!id) {
+      setError("Unable to delete record: record ID is missing.");
+      return;
+    }
 
     if (
       !window.confirm(
@@ -168,6 +175,10 @@ export default function Recycling() {
     0
   );
 
+  const categoriesUsed = new Set(
+    records.map((record) => record.category).filter(Boolean)
+  ).size;
+
   if (!isAdmin) {
     return (
       <div className="recycling-page">
@@ -203,13 +214,19 @@ export default function Recycling() {
       </div>
 
       {error && (
-        <div className="recycling-alert recycling-alert-error">
+        <div
+          className="recycling-alert recycling-alert-error"
+          role="alert"
+        >
           {error}
         </div>
       )}
 
       {message && (
-        <div className="recycling-alert recycling-alert-success">
+        <div
+          className="recycling-alert recycling-alert-success"
+          role="status"
+        >
           {message}
         </div>
       )}
@@ -235,9 +252,7 @@ export default function Recycling() {
           <div className="recycling-stat-icon">🌱</div>
           <div>
             <p>Categories Used</p>
-            <h2>
-              {new Set(records.map((record) => record.category)).size}
-            </h2>
+            <h2>{categoriesUsed}</h2>
           </div>
         </div>
       </div>
@@ -252,7 +267,9 @@ export default function Recycling() {
 
         <form className="recycling-form" onSubmit={handleSubmit}>
           <div className="recycling-field">
-            <label htmlFor="recycling-category">Waste Category</label>
+            <label htmlFor="recycling-category">
+              Waste Category
+            </label>
             <select
               id="recycling-category"
               value={form.category}
@@ -272,7 +289,9 @@ export default function Recycling() {
           </div>
 
           <div className="recycling-field">
-            <label htmlFor="recycling-quantity">Quantity (kg)</label>
+            <label htmlFor="recycling-quantity">
+              Quantity (kg)
+            </label>
             <input
               id="recycling-quantity"
               type="number"
@@ -291,7 +310,9 @@ export default function Recycling() {
           </div>
 
           <div className="recycling-field">
-            <label htmlFor="recycling-partner">Recycling Partner</label>
+            <label htmlFor="recycling-partner">
+              Recycling Partner
+            </label>
             <input
               id="recycling-partner"
               type="text"
@@ -320,7 +341,9 @@ export default function Recycling() {
         <div className="recycling-records-header">
           <div>
             <h2>Recycling Records</h2>
-            <p>View and manage registered recycling records.</p>
+            <p>
+              View and manage registered recycling records.
+            </p>
           </div>
 
           <span className="recycling-count">
@@ -361,7 +384,9 @@ export default function Recycling() {
           <div className="recycling-empty">
             <div className="recycling-empty-icon">♻️</div>
             <h3>No Recycling Records</h3>
-            <p>Add a record using the form above to get started.</p>
+            <p>
+              Add a record using the form above to get started.
+            </p>
           </div>
         )}
 
@@ -370,7 +395,9 @@ export default function Recycling() {
           filteredRecords.length === 0 && (
             <div className="recycling-empty">
               <h3>No Matching Records</h3>
-              <p>Try changing your search or category filter.</p>
+              <p>
+                Try changing your search or category filter.
+              </p>
             </div>
           )}
 
@@ -378,10 +405,13 @@ export default function Recycling() {
           <div className="recycling-record-grid">
             {filteredRecords.map((record) => {
               const id = record._id || record.id;
-              const status = record.status || "Pending";
+              const status = record.status || "Received";
 
               return (
-                <article className="recycling-record-card" key={id}>
+                <article
+                  className="recycling-record-card"
+                  key={id}
+                >
                   <div className="recycling-record-top">
                     <div className="recycling-category-icon">
                       {record.category === "Organic"
@@ -412,12 +442,14 @@ export default function Recycling() {
 
                   <div className="recycling-quantity">
                     {Number(record.quantity) || 0}
-                    <span> kg</span>
+                    <span> {record.unit || "kg"}</span>
                   </div>
 
                   <div className="recycling-partner">
                     <span>Recycling Partner</span>
-                    <strong>{record.partner || "No partner assigned"}</strong>
+                    <strong>
+                      {record.partner || "No partner assigned"}
+                    </strong>
                   </div>
 
                   {record.createdAt && (
@@ -437,7 +469,7 @@ export default function Recycling() {
                   >
                     {deletingId === id
                       ? "Deleting..."
-                      : " Delete Record"}
+                      : "Delete Record"}
                   </button>
                 </article>
               );
