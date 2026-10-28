@@ -1,49 +1,65 @@
 
-const mongoose = require("mongoose");
+const M = require("../models/Recycling");
 
-const recyclingSchema = new mongoose.Schema(
-    {
-        request: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "WasteRequest"
-        },
+exports.list = async (q, s) => {
+  try {
+    const items = await M.find()
+      .populate("request")
+      .sort({ createdAt: -1 });
 
-        category: {
-            type: String,
-            required: true
-        },
+    return s.status(200).json(items);
+  } catch (e) {
+    return s.status(500).json({ message: e.message });
+  }
+};
 
-        quantity: {
-            type: Number,
-            required: true
-        },
+exports.create = async (q, s) => {
+  try {
+    const item = await M.create(q.body);
 
-        unit: {
-            type: String,
-            default: "kg"
-        },
+    return s.status(201).json(item);
+  } catch (e) {
+    return s.status(400).json({ message: e.message });
+  }
+};
 
-        partner: String,
+exports.update = async (q, s) => {
+  try {
+    const item = await M.findByIdAndUpdate(
+      q.params.id,
+      q.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
-        status: {
-            type: String,
-            enum: [
-                "Received",
-                "Processing",
-                "Recycled",
-                "Completed"
-            ],
-            default: "Received"
-        },
-
-        collectedDate: {
-            type: Date,
-            default: Date.now
-        }
-    },
-    {
-        timestamps: true
+    if (!item) {
+      return s.status(404).json({
+        message: "Record not found",
+      });
     }
-);
 
-module.exports = mongoose.model("Recycling", recyclingSchema);
+    return s.status(200).json(item);
+  } catch (e) {
+    return s.status(400).json({ message: e.message });
+  }
+};
+
+exports.remove = async (q, s) => {
+  try {
+    const item = await M.findByIdAndDelete(q.params.id);
+
+    if (!item) {
+      return s.status(404).json({
+        message: "Record not found",
+      });
+    }
+
+    return s.status(200).json({
+      message: "Deleted successfully",
+    });
+  } catch (e) {
+    return s.status(500).json({ message: e.message });
+  }
+};
