@@ -1,6 +1,7 @@
 
 const mongoose = require("mongoose");
 
+// Create schedule schema
 const scheduleSchema = new mongoose.Schema(
     {
         request: {
@@ -19,6 +20,7 @@ const scheduleSchema = new mongoose.Schema(
         time: String,
         route: String,
 
+        // Schedule status
         status: {
             type: String,
             enum: [
@@ -35,4 +37,5 @@ const scheduleSchema = new mongoose.Schema(
     }
 );
 
+// Export Schedule model
 module.exports = mongoose.model("Schedule", scheduleSchema);
