@@ -6,10 +6,16 @@ exports.list = async (req, res) => {
             .select("-password")
             .sort({ name: 1 });
 
-        res.status(200).json(collectors);
+        res.status(200).json({
+            success: true,
+            count: collectors.length,
+            collectors
+        });
     } catch (error) {
         res.status(500).json({
-            message: "Failed to fetch collectors"
+            success: false,
+            message: "Failed to fetch collectors",
+            error: error.message
         });
     }
 };
