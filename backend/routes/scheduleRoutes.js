@@ -9,10 +9,10 @@ r.use(protect);
 // Get all schedules
 r.get("/", c.list);
 
-// Create a schedule
+// Create a new schedule
 r.post("/", c.create);
 
-// Update a schedule
+// Update an existing schedule
 r.put("/:id", c.update);
 
 // Delete a schedule

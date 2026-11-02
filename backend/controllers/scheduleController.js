@@ -1,7 +1,7 @@
 
 const M = require("../models/Schedule");
 
-// Get all schedules
+// Get all schedule records
 exports.list = async (req, res) => {
     res.json(
         await M.find()
@@ -11,7 +11,7 @@ exports.list = async (req, res) => {
     );
 };
 
-// Create a schedule
+// Create a new schedule
 exports.create = async (req, res) => {
     try {
         res.status(201).json(await M.create(req.body));
@@ -20,7 +20,7 @@ exports.create = async (req, res) => {
     }
 };
 
-// Update a schedule
+// Update an existing schedule
 exports.update = async (req, res) => {
     const x = await M.findByIdAndUpdate(
         req.params.id,
@@ -37,7 +37,7 @@ exports.update = async (req, res) => {
     res.json(x);
 };
 
-// Delete a schedule
+// Delete an existing schedule
 exports.remove = async (req, res) => {
     const x = await M.findByIdAndDelete(req.params.id);
 

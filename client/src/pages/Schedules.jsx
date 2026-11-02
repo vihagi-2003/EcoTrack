@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import api from "../api";
 import { useAuth } from "../context/AuthContext";
@@ -8,12 +9,13 @@ import {
   useJsApiLoader,
 } from "@react-google-maps/api";
 
-
+// Google Map container settings
 const containerStyle = {
   width: "100%",
   height: "450px",
 };
 
+// Default map center
 const center = {
   lat: 7.8731,
   lng: 80.7718,
@@ -31,10 +33,12 @@ export default function Schedules() {
   const [deletingId, setDeletingId] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Load Google Maps API
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
   });
 
+  // Load collection requests
   const loadRequests = async () => {
     try {
       setLoading(true);
@@ -62,8 +66,10 @@ export default function Schedules() {
     loadRequests();
   }, []);
 
+  // Get request ID
   const getId = (request) => request._id || request.id;
 
+  // Get collection location
   const getLocation = (request) =>
     request.location ||
     request.collectionLocation ||
@@ -71,17 +77,20 @@ export default function Schedules() {
     request.collection_location ||
     "-";
 
+  // Get location coordinates
   const getLatitude = (request) =>
     request.latitude ?? request.lat;
 
   const getLongitude = (request) =>
     request.longitude ?? request.lng;
 
+  // Get collection date
   const getDate = (request) =>
     request.preferredDate ||
     request.collectionDate ||
     request.date;
 
+  // Check whether coordinates are valid
   const hasValidCoordinates = (request) => {
     const lat = Number(getLatitude(request));
     const lng = Number(getLongitude(request));
@@ -104,6 +113,7 @@ export default function Schedules() {
 
   const validRequests = requests.filter(hasValidCoordinates);
 
+  // Update request collection status
   const markAsCollected = async (request) => {
     const id = getId(request);
 
@@ -159,6 +169,7 @@ export default function Schedules() {
     }
   };
 
+  // Remove a collection request (Admin only)
   const deleteRequest = async (request) => {
     if (!isAdmin) {
       setError("Only Admin can delete collection requests.");
@@ -206,6 +217,7 @@ export default function Schedules() {
     }
   };
 
+  // Display Google Maps loading error
   if (loadError) {
     return (
       <div className="schedules-page">
@@ -226,6 +238,7 @@ export default function Schedules() {
 
   return (
     <div className="schedules-page">
+      {/* Page heading and refresh button */}
       <div className="schedules-header">
         <div>
           <h1>Collection Schedules</h1>
@@ -251,6 +264,7 @@ export default function Schedules() {
       {error && <p className="schedule-error">{error}</p>}
       {message && <p className="schedule-success">{message}</p>}
 
+      {/* Collection request map */}
       <section className="schedule-section">
         <h2>📍 Collection Request Map</h2>
 
@@ -284,6 +298,7 @@ export default function Schedules() {
               />
             ))}
 
+            {/* Selected request information */}
             {selected && hasValidCoordinates(selected) && (
               <InfoWindow
                 position={{
@@ -294,10 +309,12 @@ export default function Schedules() {
               >
                 <div className="schedule-info-window">
                   <h3>📍 {getLocation(selected)}</h3>
+
                   <p>
                     <strong>Waste Type:</strong>{" "}
                     {selected.wasteType || "-"}
                   </p>
+
                   <p>
                     <strong>Date:</strong>{" "}
                     {getDate(selected)
@@ -306,6 +323,7 @@ export default function Schedules() {
                         )
                       : "-"}
                   </p>
+
                   <p>
                     <strong>Status:</strong>{" "}
                     {selected.status || "Pending"}
@@ -350,6 +368,7 @@ export default function Schedules() {
         )}
       </section>
 
+      {/* Collection request details */}
       <section className="schedule-section">
         <h2>Collection Request List</h2>
 
@@ -368,6 +387,7 @@ export default function Schedules() {
           {requests.map((request) => {
             const id = getId(request);
             const status = request.status || "Pending";
+
             const resident =
               typeof request.user === "object"
                 ? request.user?.name || request.user?.email
@@ -377,6 +397,7 @@ export default function Schedules() {
               <article className="schedule-request-card" key={id}>
                 <div className="schedule-request-top">
                   <h3>{getLocation(request)}</h3>
+
                   <span
                     className={`schedule-status ${status
                       .toLowerCase()
@@ -423,6 +444,7 @@ export default function Schedules() {
                   </p>
                 </div>
 
+                {/* Request action buttons */}
                 <div className="schedule-request-actions">
                   {status !== "Collected" &&
                     status !== "Completed" && (
