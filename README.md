@@ -2,18 +2,21 @@
 
 ## 1. Project Overview
 
-EcoTrack is a full-stack web application developed to improve waste collection management. The system helps users submit waste collection requests, view collection schedules, manage complaints, and access recycling-related information.
+EcoTrack is a full-stack web-based Smart Waste Collection Management System developed to improve and simplify waste collection activities.
 
-The main goal of EcoTrack is to make waste collection more efficient, organized, and environmentally friendly.
+The system provides a centralized platform where users can submit waste collection requests, view collection schedules, manage complaints, and access recycling-related information. It also supports administrative activities through dedicated management features and a dashboard.
+
+The main purpose of EcoTrack is to make waste collection activities more organized, efficient, and environmentally friendly.
 
 ## 2. Project Objectives
 
 - Simplify the waste collection request process.
-- Manage waste collection requests efficiently.
-- Provide collection schedule information.
-- Allow users to submit and manage complaints.
-- Support recycling management.
-- Provide a user-friendly interface for waste management activities.
+- Improve waste collection management.
+- Organize collection schedules and routes.
+- Support collector management activities.
+- Provide a platform for complaint management.
+- Promote recycling awareness and management.
+- Provide an easy-to-use interface for users and administrators.
 
 ## 3. Technologies Used
 
@@ -28,7 +31,7 @@ The main goal of EcoTrack is to make waste collection more efficient, organized,
 ### Backend
 - Node.js
 - Express.js
-- REST API
+- RESTful API
 
 ### Database
 - MongoDB
@@ -36,59 +39,107 @@ The main goal of EcoTrack is to make waste collection more efficient, organized,
 
 ### Development Tools
 - Visual Studio Code
-- Git and GitHub
+- Git
+- GitHub
 - MongoDB Compass
+- Postman
 
-## 4. Main Features
+## 4. Main Modules
 
-- User registration and login
-- Waste collection request management
-- Collection schedule management
-- Location display using Google Maps
-- Complaint management
-- Recycling information management
-- Dashboard with system statistics
+### 4.1 User Authentication Management
+Provides user registration and login functionality to access the system.
 
-## 5. Project Structure
+### 4.2 Waste Collection Request Management
+Allows users to submit and manage waste collection requests with relevant waste details and collection locations.
+
+### 4.3 Collection Scheduling and Route Management
+Supports the organization of waste collection schedules and collection route information.
+
+### 4.4 Collector Management
+Supports the management of waste collection personnel and related collector information.
+
+### 4.5 Complaint and Recycling Management
+Provides facilities for managing user complaints and recycling-related information.
+
+## 5. Main Features
+
+- User registration and login.
+- Waste collection request submission.
+- Waste collection request management.
+- Collection schedule management.
+- Collector management.
+- Location display using Google Maps API.
+- Complaint management.
+- Recycling information management.
+- Dashboard with system statistics.
+
+## 6. Project Structure
 
 ```text
 EcoTrack/
+│
 ├── backend/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── models/
+│   ├── routes/
 │   ├── server.js
-│   ├── package.json
-│   └── ...
+│   ├── seed.js
+│   └── package.json
+│
 ├── client/
 │   ├── src/
+│   ├── public/
 │   ├── package.json
 │   └── ...
+│
 ├── .gitignore
 └── README.md
 ```
 
-## 6. Prerequisites
+## 7. Prerequisites
 
-Install the following software before running the project:
+Make sure the following software is installed:
 
-- Node.js and npm
+- Node.js
+- npm (Node Package Manager)
 - MongoDB
-- Visual Studio Code (recommended)
+- Visual Studio Code (Recommended)
 
-## 7. Installation and Setup
+## 8. Installation and Setup
 
-### Run Backend
+Follow the steps below to run the EcoTrack application locally.
 
-Open a terminal in the project folder and execute:
+### Step 1: Clone the Repository
 
 ```bash
-cd EcoTrack/backend
+git clone https://github.com/vihagi-2003/EcoTrack.git
+```
+
+### Step 2: Open the Project Folder
+
+```bash
+cd EcoTrack
+```
+
+### Step 3: Backend Setup
+
+Open a terminal and execute:
+
+```bash
+cd backend
 npm install
 npm run seed
 npm start
 ```
 
-### Run Frontend (New Terminal)
+The backend server runs on:
 
-Open a second terminal and execute:
+http://localhost:5000
+
+### Step 4: Frontend Setup
+
+Open a new terminal and execute:
 
 ```bash
 cd EcoTrack/client
@@ -96,22 +147,13 @@ npm install
 npm run dev
 ```
 
-## 8. Application URLs
+The frontend application runs on:
 
-- **Frontend:** http://localhost:5173
-- **Backend:** http://localhost:5000
-- **MongoDB:** mongodb://127.0.0.1:27017/EcoTrack
+http://localhost:5173
 
-## 9. Demo Login
+## 9. Database Configuration
 
-- **Email:** admin@ecotrack.com
-- **Password:** 123456
-
-*Note: Use these demo credentials only if the account is configured in the application and the login has been tested successfully.*
-
-## 10. Environment Configuration
-
-Configure the required environment variables in the appropriate `.env` files before starting the application.
+EcoTrack uses MongoDB as its database and Mongoose for database connectivity and data management.
 
 Example MongoDB connection string:
 
@@ -119,22 +161,53 @@ Example MongoDB connection string:
 MONGO_URI=mongodb://127.0.0.1:27017/EcoTrack
 ```
 
-If the application uses a JWT secret or Google Maps API key, configure those values according to the project code.
+Make sure MongoDB is running before starting the backend server.
 
-**Important:** Do not commit real passwords, private API keys, or other secrets to GitHub.
+## 10. Environment Configuration
 
-## 11. Future Improvements
+Create the required `.env` file inside the backend folder.
 
-- Email and SMS notifications
-- Improved waste collection route planning
-- Advanced reports and analytics
-- Additional recycling statistics
-- Improved mobile responsiveness
+Example:
 
-## 12. GitHub Repository
+```env
+PORT=5000
+MONGO_URI=mongodb://127.0.0.1:27017/EcoTrack
+JWT_SECRET=your_secret_key
+```
 
-https://github.com/vihagi-2003/EcoTrack-Smart-Waste-Collection-
+If Google Maps API integration is enabled, configure the frontend environment variable in the client folder:
 
-## 13. Author
+```env
+VITE_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+```
 
-Developed as an Information and Communication Technology academic project.
+Use your own valid configuration values. Do not upload private passwords or API secrets to GitHub.
+
+## 11. Application URLs
+
+| Component | URL |
+|---|---|
+| Frontend | http://localhost:5173 |
+| Backend | http://localhost:5000 |
+| MongoDB | mongodb://127.0.0.1:27017/EcoTrack |
+
+## 12. Future Improvements
+
+- Email and SMS notifications.
+- Advanced waste collection route optimization.
+- Improved reports and analytics.
+- Additional recycling statistics.
+- Enhanced mobile responsiveness.
+- Real-time collection status updates.
+
+## 13. GitHub Repository
+
+Repository: https://github.com/vihagi-2003/EcoTrack
+
+## 14. Author
+
+Developed as an academic project in Information and Communication Technology.
+
+**Project Name:** EcoTrack – Smart Waste Collection Management System
+
+**University:** South Eastern University of Sri Lanka
